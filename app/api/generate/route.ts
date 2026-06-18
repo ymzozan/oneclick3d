@@ -1,42 +1,55 @@
 import { NextResponse } from "next/server";
-import { createImageTo3DTask, createTextTo3DTask } from "@/lib/meshy";
+import { generateMeshFromImage, inferenceConfigured } from "@/lib/inference";
+
+// Reference images and GLB meshes can be a few megabytes; allow the function
+// enough time to forward them to the GPU service and stream the result back.
+export const maxDuration = 120;
 
 /**
- * Start a 3D generation task from either a text prompt or a reference image.
- * Body: { prompt?: string; imageUrl?: string }
- *  - `imageUrl` may be a public URL or a data URI.
- *  - When both are provided, the image takes precedence.
+ * Generate a 3D mesh from a reference image using the self-hosted inference
+ * service. Returns the GLB binary directly.
+ *
+ * Body: { imageUrl: string } — a public URL or data URI.
+ *
+ * Text-to-3D from a bare prompt is handled by a separate pipeline that is not
+ * wired up yet; prompt-only requests return 422 so the client can fall back to
+ * a sample piece.
  */
 export async function POST(request: Request) {
-  let prompt: string | undefined;
   let imageUrl: string | undefined;
 
   try {
-    const body = (await request.json()) as {
-      prompt?: string;
-      imageUrl?: string;
-    };
-    prompt = body.prompt?.trim();
+    const body = (await request.json()) as { imageUrl?: string };
     imageUrl = body.imageUrl;
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  if (!prompt && !imageUrl) {
+  if (!imageUrl) {
     return NextResponse.json(
-      { error: "Provide a prompt or a reference image." },
-      { status: 400 },
+      { error: "Text-to-3D is not available yet — attach a reference image." },
+      { status: 422 },
+    );
+  }
+
+  if (!inferenceConfigured()) {
+    return NextResponse.json(
+      { error: "Inference service is not configured." },
+      { status: 503 },
     );
   }
 
   try {
-    const taskId = imageUrl
-      ? await createImageTo3DTask(imageUrl)
-      : await createTextTo3DTask(prompt!);
-    return NextResponse.json({ taskId });
+    const glb = await generateMeshFromImage(imageUrl);
+    return new Response(glb, {
+      headers: {
+        "Content-Type": "model/gltf-binary",
+        "Content-Disposition": 'inline; filename="model.glb"',
+      },
+    });
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Failed to start generation.";
+      error instanceof Error ? error.message : "Failed to generate mesh.";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

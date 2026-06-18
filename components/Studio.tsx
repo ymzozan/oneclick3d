@@ -69,22 +69,27 @@ export default function Studio() {
       seats: [],
     };
 
-    // Hand off to the generation service. When no API key is configured the
-    // request fails gracefully and the studio falls back to a sample piece so
-    // the full pipeline can still be explored.
+    // Hand off to the self-hosted inference service. When it is unavailable
+    // (or for prompt-only input, which routes through a separate pipeline that
+    // is not wired up yet) the studio falls back to a sample piece so the full
+    // workflow can still be explored.
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt.trim(), imageUrl: referenceUrl }),
+        body: JSON.stringify({ imageUrl: referenceUrl }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        job.note = data.error ?? "Generation service unavailable — showing a sample piece.";
+
+      if (res.ok && res.headers.get("Content-Type")?.includes("gltf")) {
+        const blob = await res.blob();
+        job.modelUrl = URL.createObjectURL(blob);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        job.note = data.error ?? "Showing a sample piece — connect the inference service for real generation.";
       }
       job.stage = "preview";
     } catch {
-      job.note = "Generation service unavailable — showing a sample piece.";
+      job.note = "Inference service unavailable — showing a sample piece.";
       job.stage = "preview";
     }
 

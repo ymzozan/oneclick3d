@@ -19,7 +19,7 @@ interface so the design, the stone layout and the casting plan stay in sync.
 | Stage        | Purpose                                                        | Hand-off     |
 | ------------ | -------------------------------------------------------------- | ------------ |
 | Reference    | Upload a reference photo or sketch                             | —            |
-| Generate 3D  | Produce a base mesh from the reference                         | Meshy        |
+| Generate 3D  | Produce a base mesh from the reference                         | Self-hosted  |
 | Preview      | Inspect the model in the browser                               | three.js     |
 | Stone Seats  | Detect and map gemstone seats for flush / pavé setting         | Vision model |
 | Sculpt       | Export for organic, high-detail work                           | ZBrush       |
@@ -31,7 +31,7 @@ interface so the design, the stone layout and the casting plan stay in sync.
 - **Next.js 16** (App Router) and **React 19**
 - **TypeScript** and **Tailwind CSS**
 - **three.js** via **@react-three/fiber** / **@react-three/drei** for the viewport
-- **Meshy** image-to-3D API for mesh generation
+- **Self-hosted image-to-3D** — the open-source [TripoSR](https://github.com/VAST-AI-Research/TripoSR) model running on serverless GPUs (see [`inference/`](./inference)), with no third-party generation API
 - Vision model integration for gemstone seat detection
 
 ## Getting started
@@ -46,12 +46,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Environment
 
-| Variable        | Description                                |
-| --------------- | ------------------------------------------ |
-| `MESHY_API_KEY` | API key for the Meshy image-to-3D service. |
+| Variable        | Description                                            |
+| --------------- | ------------------------------------------------------ |
+| `INFERENCE_URL` | URL of the self-hosted image-to-3D service (`inference/`). |
 
-Without keys configured, the studio runs against built-in placeholders so the
-interface can be explored end to end.
+Without the service configured, the studio runs against built-in placeholders so
+the interface can be explored end to end. See [`inference/README.md`](./inference/README.md)
+to deploy the generation service.
 
 ## Status
 
