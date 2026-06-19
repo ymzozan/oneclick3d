@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { PIPELINE_STAGES, type StageId, stageIndex } from "@/lib/pipeline";
+import { specFromPrompt, seatPositions, type JewelrySpec } from "@/lib/jewelry";
 import type { StoneSeat } from "@/app/api/stone-seats/route";
 
 // The viewer pulls in three.js, so it is loaded on the client only.
@@ -25,6 +26,7 @@ interface Job {
   createdAt: number;
   stage: StageId;
   modelUrl?: string;
+  spec?: JewelrySpec;
   seats: StoneSeat[];
   note?: string;
 }
@@ -65,32 +67,35 @@ export default function Studio() {
       source: referenceUrl ? "image" : "prompt",
       referenceUrl,
       createdAt: Date.now(),
-      stage: "generate",
+      stage: "preview",
       seats: [],
     };
 
-    // Hand off to the self-hosted inference service. When it is unavailable
-    // (or for prompt-only input, which routes through a separate pipeline that
-    // is not wired up yet) the studio falls back to a sample piece so the full
-    // workflow can still be explored.
-    try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: referenceUrl }),
-      });
-
-      if (res.ok && res.headers.get("Content-Type")?.includes("gltf")) {
-        const blob = await res.blob();
-        job.modelUrl = URL.createObjectURL(blob);
-      } else {
-        const data = await res.json().catch(() => ({}));
-        job.note = data.error ?? "Showing a sample piece — connect the inference service for real generation.";
+    if (referenceUrl) {
+      // Image input is sent to the self-hosted inference service. When it is
+      // unavailable the studio falls back to a parametric preview so the full
+      // workflow can still be explored.
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: referenceUrl }),
+        });
+        if (res.ok && res.headers.get("Content-Type")?.includes("gltf")) {
+          const blob = await res.blob();
+          job.modelUrl = URL.createObjectURL(blob);
+        } else {
+          job.spec = specFromPrompt(prompt);
+          const data = await res.json().catch(() => ({}));
+          job.note = data.error ?? "Showing a parametric preview — deploy the inference service for a photoreal mesh.";
+        }
+      } catch {
+        job.spec = specFromPrompt(prompt);
+        job.note = "Inference service unavailable — showing a parametric preview.";
       }
-      job.stage = "preview";
-    } catch {
-      job.note = "Inference service unavailable — showing a sample piece.";
-      job.stage = "preview";
+    } else {
+      // Prompt input is generated instantly in-browser by the parametric engine.
+      job.spec = specFromPrompt(prompt);
     }
 
     setJobs((prev) => [job, ...prev]);
@@ -108,6 +113,20 @@ export default function Studio() {
     if (!active) return;
     setBusy(true);
     try {
+      // For parametric pieces the seats are derived directly from the generated
+      // geometry. A generated mesh is sent to the detection service instead.
+      if (active.spec) {
+        const setting = active.spec.setting === "three-stone" ? "prong" : active.spec.setting;
+        const seats: StoneSeat[] = seatPositions(active.spec).map((position, i) => ({
+          position,
+          diameterMm: Math.round((i === 0 ? active.spec!.stoneSize : active.spec!.stoneSize * 0.5) * 18 * 10) / 10,
+          setting: setting as StoneSeat["setting"],
+          confidence: 1,
+        }));
+        update(active.id, { seats });
+        return;
+      }
+
       const res = await fetch("/api/stone-seats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -250,6 +269,7 @@ export default function Studio() {
       <section className="relative flex min-h-[55vh] flex-1 items-center justify-center bg-muted/30">
         <ModelViewer
           modelUrl={active.modelUrl}
+          spec={active.spec}
           seats={active.stage === "stone-seats" ? active.seats : []}
         />
       </section>
