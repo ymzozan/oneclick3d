@@ -49,6 +49,10 @@ export interface Dict {
   approve: string;
   regenerate: string;
   finished: string;
+  navStudio: string;
+  navPricing: string;
+  signIn: string;
+  startCreating: string;
   parametricNote: string;
   unavailableNote: string;
   stages: Record<WorkStage, { label: string; desc: string }>;
@@ -75,6 +79,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "Looks good — continue",
     regenerate: "Regenerate",
     finished: "Completed",
+    navStudio: "Studio",
+    navPricing: "Pricing",
+    signIn: "Sign in",
+    startCreating: "Start creating",
     parametricNote: "Showing a parametric preview — deploy the inference service for a photoreal mesh.",
     unavailableNote: "Inference service unavailable — showing a parametric preview.",
     stages: {
@@ -106,6 +114,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "Beğendim, devam et",
     regenerate: "Yeniden üret",
     finished: "Tamamlandı",
+    navStudio: "Stüdyo",
+    navPricing: "Fiyatlandırma",
+    signIn: "Giriş yap",
+    startCreating: "Üretmeye başla",
     parametricNote: "Parametrik önizleme gösteriliyor — fotogerçekçi mesh için inference servisini yayına alın.",
     unavailableNote: "Inference servisi kullanılamıyor — parametrik önizleme gösteriliyor.",
     stages: {
@@ -137,6 +149,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "Me gusta — continuar",
     regenerate: "Regenerar",
     finished: "Completado",
+    navStudio: "Estudio",
+    navPricing: "Precios",
+    signIn: "Iniciar sesión",
+    startCreating: "Empezar a crear",
     parametricNote: "Mostrando una vista paramétrica — despliega el servicio de inferencia para una malla fotorrealista.",
     unavailableNote: "Servicio de inferencia no disponible — mostrando vista paramétrica.",
     stages: {
@@ -168,6 +184,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "Нравится — продолжить",
     regenerate: "Сгенерировать заново",
     finished: "Завершено",
+    navStudio: "Студия",
+    navPricing: "Цены",
+    signIn: "Войти",
+    startCreating: "Начать создавать",
     parametricNote: "Показана параметрическая модель — разверните сервис инференса для фотореалистичной сетки.",
     unavailableNote: "Сервис инференса недоступен — показана параметрическая модель.",
     stages: {
@@ -199,6 +219,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "满意 — 继续",
     regenerate: "重新生成",
     finished: "已完成",
+    navStudio: "工作室",
+    navPricing: "价格",
+    signIn: "登录",
+    startCreating: "开始创作",
     parametricNote: "显示参数化预览 — 部署推理服务以获得逼真网格。",
     unavailableNote: "推理服务不可用 — 显示参数化预览。",
     stages: {
@@ -230,6 +254,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "पसंद आया — जारी रखें",
     regenerate: "फिर से बनाएं",
     finished: "पूर्ण",
+    navStudio: "स्टूडियो",
+    navPricing: "मूल्य",
+    signIn: "साइन इन",
+    startCreating: "बनाना शुरू करें",
     parametricNote: "पैरामीट्रिक पूर्वावलोकन दिखाया जा रहा है — फोटोरियल मेश के लिए इन्फरेंस सेवा तैनात करें।",
     unavailableNote: "इन्फरेंस सेवा उपलब्ध नहीं — पैरामीट्रिक पूर्वावलोकन दिखाया जा रहा है।",
     stages: {
@@ -261,6 +289,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "أعجبني — متابعة",
     regenerate: "إعادة الإنشاء",
     finished: "اكتمل",
+    navStudio: "الاستوديو",
+    navPricing: "الأسعار",
+    signIn: "تسجيل الدخول",
+    startCreating: "ابدأ الإبداع",
     parametricNote: "عرض معاينة بارامترية — انشر خدمة الاستدلال للحصول على شبكة واقعية.",
     unavailableNote: "خدمة الاستدلال غير متاحة — عرض معاينة بارامترية.",
     stages: {
@@ -292,6 +324,10 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     approve: "J'aime — continuer",
     regenerate: "Régénérer",
     finished: "Terminé",
+    navStudio: "Studio",
+    navPricing: "Tarifs",
+    signIn: "Se connecter",
+    startCreating: "Commencer à créer",
     parametricNote: "Aperçu paramétrique affiché — déployez le service d'inférence pour un maillage photoréaliste.",
     unavailableNote: "Service d'inférence indisponible — aperçu paramétrique affiché.",
     stages: {

@@ -54,10 +54,22 @@ Without the service configured, the studio runs against built-in placeholders so
 the interface can be explored end to end. See [`inference/README.md`](./inference/README.md)
 to deploy the generation service.
 
+## Product
+
+OneClick3D is structured as a product, not just a tool:
+
+- `/` — marketing landing page
+- `/studio` — the generation studio with an approval-based pipeline
+- `/pricing` — Free, Pro, Studio and Enterprise plans (credit-based)
+
+The studio is localised into eight languages and runs an approval flow where
+each stage can be regenerated or approved before advancing.
+
 ## Status
 
-Early development. The pipeline interface and viewport are in place; tool
-integrations are being wired up stage by stage. A native application built on the
+Early development. The studio, multilingual UI, parametric generation and
+exports are in place; the self-hosted mesh service, vision-based stone seat
+detection and checkout are being wired up. A native application built on the
 same engine is planned.
 
 ## License
