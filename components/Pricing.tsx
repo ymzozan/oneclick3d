@@ -3,13 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/components/LanguageProvider";
+import { format } from "@/lib/i18n";
+import { MARKETING } from "@/lib/i18nMarketing";
 
 interface Tier {
   name: string;
   monthly: number | null; // null => custom
-  credits: string;
+  credits: number | null; // null => custom volume
   highlight?: boolean;
-  cta: string;
+  cta: "free" | "start" | "contact";
   href: string;
   features: string[];
 }
@@ -18,8 +21,8 @@ const TIERS: Tier[] = [
   {
     name: "Free",
     monthly: 0,
-    credits: "100 credits / month",
-    cta: "Start free",
+    credits: 100,
+    cta: "free",
     href: "/studio",
     features: [
       "Text & image to 3D",
@@ -31,8 +34,8 @@ const TIERS: Tier[] = [
   {
     name: "Pro",
     monthly: 20,
-    credits: "1,000 credits / month",
-    cta: "Get started",
+    credits: 1000,
+    cta: "start",
     href: "/studio",
     features: [
       "Everything in Free",
@@ -45,9 +48,9 @@ const TIERS: Tier[] = [
   {
     name: "Studio",
     monthly: 60,
-    credits: "4,000 credits / month",
+    credits: 4000,
     highlight: true,
-    cta: "Get started",
+    cta: "start",
     href: "/studio",
     features: [
       "Everything in Pro",
@@ -60,8 +63,8 @@ const TIERS: Tier[] = [
   {
     name: "Enterprise",
     monthly: null,
-    credits: "Custom volume",
-    cta: "Contact us",
+    credits: null,
+    cta: "contact",
     href: "mailto:ozan@codeimo.com",
     features: [
       "Everything in Studio",
@@ -73,17 +76,18 @@ const TIERS: Tier[] = [
 ];
 
 export default function Pricing() {
+  const { locale } = useI18n();
+  const m = MARKETING[locale];
   const [yearly, setYearly] = useState(false);
 
-  const price = (monthly: number) =>
-    yearly ? Math.round(monthly * 0.8) : monthly;
+  const price = (monthly: number) => (yearly ? Math.round(monthly * 0.8) : monthly);
+  const ctaLabel = (cta: Tier["cta"]) =>
+    cta === "free" ? m.ctaStartFree : cta === "contact" ? m.ctaContact : m.ctaGetStarted;
 
   return (
     <main className="flex flex-1 flex-col items-center px-6 py-20">
-      <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Pricing</h1>
-      <p className="mt-3 text-muted-foreground">
-        Start free. Upgrade when you are ready to produce.
-      </p>
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{m.pricingTitle}</h1>
+      <p className="mt-3 text-muted-foreground">{m.pricingSubtitle}</p>
 
       {/* Billing toggle */}
       <div className="mt-8 inline-flex items-center rounded-full border p-1 text-sm">
@@ -93,7 +97,7 @@ export default function Pricing() {
             !yearly ? "bg-foreground text-background" : "text-muted-foreground"
           }`}
         >
-          Monthly
+          {m.monthly}
         </button>
         <button
           onClick={() => setYearly(true)}
@@ -101,7 +105,7 @@ export default function Pricing() {
             yearly ? "bg-foreground text-background" : "text-muted-foreground"
           }`}
         >
-          Yearly <span className="text-xs opacity-70">−20%</span>
+          {m.yearly} <span className="text-xs opacity-70">−20%</span>
         </button>
       </div>
 
@@ -117,29 +121,27 @@ export default function Pricing() {
               <h2 className="font-medium">{tier.name}</h2>
               {tier.highlight && (
                 <span className="rounded-full bg-foreground px-2 py-0.5 text-[10px] font-medium text-background">
-                  Popular
+                  {m.popular}
                 </span>
               )}
             </div>
 
             <div className="mt-4 flex items-baseline gap-1">
               {tier.monthly === null ? (
-                <span className="text-3xl font-semibold">Custom</span>
+                <span className="text-3xl font-semibold">{m.custom}</span>
               ) : (
                 <>
                   <span className="text-3xl font-semibold">${price(tier.monthly)}</span>
-                  <span className="text-sm text-muted-foreground">/ mo</span>
+                  <span className="text-sm text-muted-foreground">{m.perMonth}</span>
                 </>
               )}
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">{tier.credits}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {tier.credits === null ? m.customVolume : format(m.creditsPerMonth, { n: tier.credits.toLocaleString() })}
+            </p>
 
-            <Button
-              asChild
-              variant={tier.highlight ? "default" : "outline"}
-              className="mt-6"
-            >
-              <Link href={tier.href}>{tier.cta}</Link>
+            <Button asChild variant={tier.highlight ? "default" : "outline"} className="mt-6">
+              <Link href={tier.href}>{ctaLabel(tier.cta)}</Link>
             </Button>
 
             <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
@@ -154,9 +156,7 @@ export default function Pricing() {
         ))}
       </div>
 
-      <p className="mt-10 text-xs text-muted-foreground">
-        Prices shown for planning. Checkout is coming soon.
-      </p>
+      <p className="mt-10 text-xs text-muted-foreground">{m.billingNote}</p>
     </main>
   );
 }
