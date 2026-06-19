@@ -73,6 +73,26 @@ export function specFromPrompt(prompt: string): JewelrySpec {
 }
 
 /**
+ * Produce a fresh variation of a spec, keeping the overall concept but nudging
+ * the details. Used by the "regenerate" action so each take feels distinct.
+ */
+export function varySpec(spec: JewelrySpec): JewelrySpec {
+  const cuts: StoneCut[] = ["round", "oval", "emerald", "princess"];
+  const settings: Setting[] = ["solitaire", "pave", "bezel", "three-stone"];
+  const pick = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+
+  const setting = pick(settings);
+  return {
+    ...spec,
+    cut: pick(cuts),
+    setting,
+    accents: setting === "pave" ? 8 + Math.floor(Math.random() * 14) : setting === "three-stone" ? 2 : 0,
+    bandWidth: Math.round((0.1 + Math.random() * 0.16) * 100) / 100,
+    stoneSize: Math.round((0.26 + Math.random() * 0.2) * 100) / 100,
+  };
+}
+
+/**
  * Positions of the gemstone seats for a spec, in the viewport's normalised
  * [0, 1] space (matching the stone-seat marker contract). Computed from the
  * generated geometry so highlights land exactly on the stones.
