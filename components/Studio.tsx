@@ -2,9 +2,11 @@
 
 import { useCallback, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useI18n } from "@/components/LanguageProvider";
+import { useCredits, GENERATION_COST } from "@/components/CreditsProvider";
 import { format } from "@/lib/i18n";
 import { PIPELINE_STAGES, type StageId, stageIndex } from "@/lib/pipeline";
 import { specFromPrompt, varySpec, seatPositions, type JewelrySpec } from "@/lib/jewelry";
@@ -58,6 +60,7 @@ function computeSeats(spec: JewelrySpec): StoneSeat[] {
 
 export default function Studio() {
   const { t } = useI18n();
+  const { spend } = useCredits();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [activeId, setActiveId] = useState<string>();
   const [prompt, setPrompt] = useState("");
@@ -76,6 +79,10 @@ export default function Studio() {
 
   const generate = useCallback(async () => {
     if (!prompt.trim() && !referenceUrl) return;
+    if (!spend(GENERATION_COST)) {
+      setNote(t.outOfCredits);
+      return;
+    }
     setBusy(true);
     setNote(undefined);
 
@@ -115,7 +122,7 @@ export default function Studio() {
     setPrompt("");
     setReferenceUrl(undefined);
     setBusy(false);
-  }, [prompt, referenceUrl, t]);
+  }, [prompt, referenceUrl, t, spend]);
 
   const update = useCallback((id: string, patch: Partial<Job>) => {
     setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, ...patch } : j)));
@@ -221,6 +228,15 @@ export default function Studio() {
               </button>
             ))}
           </div>
+
+          {note && (
+            <p className="mt-4 text-xs text-destructive">
+              {note}{" "}
+              <Link href="/pricing" className="underline underline-offset-4">
+                {t.navPricing}
+              </Link>
+            </p>
+          )}
 
           {jobs.length > 0 && (
             <button

@@ -4,10 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/components/LanguageProvider";
+import { useCredits } from "@/components/CreditsProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function SiteHeader() {
   const { t } = useI18n();
+  const { credits } = useCredits();
   const pathname = usePathname();
 
   const link = (href: string, label: string) => (
@@ -34,13 +36,14 @@ export default function SiteHeader() {
       </div>
 
       <div className="flex items-center gap-3">
-        <span
+        <Link
+          href="/pricing"
           title="Credits"
-          className="hidden items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs text-muted-foreground sm:flex"
+          className="hidden items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs text-muted-foreground transition hover:text-foreground sm:flex"
         >
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-foreground" />
-          100
-        </span>
+          {credits}
+        </Link>
         <LanguageSwitcher />
         <Button size="sm" variant="outline">
           {t.signIn}

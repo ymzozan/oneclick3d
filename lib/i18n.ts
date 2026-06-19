@@ -53,6 +53,7 @@ export interface Dict {
   navPricing: string;
   signIn: string;
   startCreating: string;
+  outOfCredits: string;
   parametricNote: string;
   unavailableNote: string;
   stages: Record<WorkStage, { label: string; desc: string }>;
@@ -83,6 +84,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "Pricing",
     signIn: "Sign in",
     startCreating: "Start creating",
+    outOfCredits: "Out of credits — upgrade your plan.",
     parametricNote: "Showing a parametric preview — deploy the inference service for a photoreal mesh.",
     unavailableNote: "Inference service unavailable — showing a parametric preview.",
     stages: {
@@ -118,6 +120,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "Fiyatlandırma",
     signIn: "Giriş yap",
     startCreating: "Üretmeye başla",
+    outOfCredits: "Krediniz bitti — planınızı yükseltin.",
     parametricNote: "Parametrik önizleme gösteriliyor — fotogerçekçi mesh için inference servisini yayına alın.",
     unavailableNote: "Inference servisi kullanılamıyor — parametrik önizleme gösteriliyor.",
     stages: {
@@ -153,6 +156,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "Precios",
     signIn: "Iniciar sesión",
     startCreating: "Empezar a crear",
+    outOfCredits: "Sin créditos — mejora tu plan.",
     parametricNote: "Mostrando una vista paramétrica — despliega el servicio de inferencia para una malla fotorrealista.",
     unavailableNote: "Servicio de inferencia no disponible — mostrando vista paramétrica.",
     stages: {
@@ -188,6 +192,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "Цены",
     signIn: "Войти",
     startCreating: "Начать создавать",
+    outOfCredits: "Кредиты закончились — обновите план.",
     parametricNote: "Показана параметрическая модель — разверните сервис инференса для фотореалистичной сетки.",
     unavailableNote: "Сервис инференса недоступен — показана параметрическая модель.",
     stages: {
@@ -223,6 +228,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "价格",
     signIn: "登录",
     startCreating: "开始创作",
+    outOfCredits: "积分用尽 — 请升级方案。",
     parametricNote: "显示参数化预览 — 部署推理服务以获得逼真网格。",
     unavailableNote: "推理服务不可用 — 显示参数化预览。",
     stages: {
@@ -258,6 +264,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "मूल्य",
     signIn: "साइन इन",
     startCreating: "बनाना शुरू करें",
+    outOfCredits: "क्रेडिट समाप्त — अपना प्लान अपग्रेड करें।",
     parametricNote: "पैरामीट्रिक पूर्वावलोकन दिखाया जा रहा है — फोटोरियल मेश के लिए इन्फरेंस सेवा तैनात करें।",
     unavailableNote: "इन्फरेंस सेवा उपलब्ध नहीं — पैरामीट्रिक पूर्वावलोकन दिखाया जा रहा है।",
     stages: {
@@ -293,6 +300,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "الأسعار",
     signIn: "تسجيل الدخول",
     startCreating: "ابدأ الإبداع",
+    outOfCredits: "نفدت الأرصدة — قم بترقية خطتك.",
     parametricNote: "عرض معاينة بارامترية — انشر خدمة الاستدلال للحصول على شبكة واقعية.",
     unavailableNote: "خدمة الاستدلال غير متاحة — عرض معاينة بارامترية.",
     stages: {
@@ -328,6 +336,7 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     navPricing: "Tarifs",
     signIn: "Se connecter",
     startCreating: "Commencer à créer",
+    outOfCredits: "Plus de crédits — améliorez votre forfait.",
     parametricNote: "Aperçu paramétrique affiché — déployez le service d'inférence pour un maillage photoréaliste.",
     unavailableNote: "Service d'inférence indisponible — aperçu paramétrique affiché.",
     stages: {
