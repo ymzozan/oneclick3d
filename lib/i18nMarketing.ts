@@ -29,6 +29,12 @@ export interface MarketingDict {
   ctaStartFree: string;
   ctaGetStarted: string;
   ctaContact: string;
+  planFeatures: {
+    free: string[];
+    pro: string[];
+    studio: string[];
+    enterprise: string[];
+  };
 }
 
 export const MARKETING: Record<Locale, MarketingDict> = {
@@ -62,6 +68,12 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "Start free",
     ctaGetStarted: "Get started",
     ctaContact: "Contact us",
+    planFeatures: {
+      free: ["Text & image to 3D", "Parametric generation", "Standard queue", "Assets under CC BY 4.0"],
+      pro: ["Everything in Free", "Faster generation", "Private asset ownership", "GLB / STL / OBJ exports", "10 concurrent tasks"],
+      studio: ["Everything in Pro", "Priority queue", "API access", "Team seats", "Credit top-ups"],
+      enterprise: ["Everything in Studio", "SSO & access control", "Dedicated support", "Invoicing & wire transfer"],
+    },
   },
   tr: {
     badge: "Kuyumcular ve dijital sanatçılar için",
@@ -93,6 +105,12 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "Ücretsiz başla",
     ctaGetStarted: "Başla",
     ctaContact: "Bize ulaşın",
+    planFeatures: {
+      free: ["Metin ve görselden 3D", "Parametrik üretim", "Standart sıra", "CC BY 4.0 lisanslı çıktılar"],
+      pro: ["Free'deki her şey", "Daha hızlı üretim", "Özel varlık sahipliği", "GLB / STL / OBJ dışa aktarım", "10 eşzamanlı görev"],
+      studio: ["Pro'daki her şey", "Öncelikli sıra", "API erişimi", "Takım koltukları", "Kredi yükleme"],
+      enterprise: ["Studio'daki her şey", "SSO ve erişim kontrolü", "Özel destek", "Faturalama ve havale"],
+    },
   },
   es: {
     badge: "Para joyeros y artistas digitales",
@@ -124,6 +142,12 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "Empezar gratis",
     ctaGetStarted: "Comenzar",
     ctaContact: "Contáctanos",
+    planFeatures: {
+      free: ["Texto e imagen a 3D", "Generación paramétrica", "Cola estándar", "Activos bajo CC BY 4.0"],
+      pro: ["Todo lo de Free", "Generación más rápida", "Propiedad privada de activos", "Exportar GLB / STL / OBJ", "10 tareas simultáneas"],
+      studio: ["Todo lo de Pro", "Cola prioritaria", "Acceso a la API", "Asientos de equipo", "Recargas de créditos"],
+      enterprise: ["Todo lo de Studio", "SSO y control de acceso", "Soporte dedicado", "Facturación y transferencia"],
+    },
   },
   ru: {
     badge: "Для ювелиров и цифровых художников",
@@ -155,6 +179,12 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "Начать бесплатно",
     ctaGetStarted: "Начать",
     ctaContact: "Связаться",
+    planFeatures: {
+      free: ["Текст и изображение в 3D", "Параметрическая генерация", "Стандартная очередь", "Ассеты под CC BY 4.0"],
+      pro: ["Всё из Free", "Быстрая генерация", "Частное владение ассетами", "Экспорт GLB / STL / OBJ", "10 параллельных задач"],
+      studio: ["Всё из Pro", "Приоритетная очередь", "Доступ к API", "Места для команды", "Пополнение кредитов"],
+      enterprise: ["Всё из Studio", "SSO и контроль доступа", "Выделенная поддержка", "Счета и банковский перевод"],
+    },
   },
   zh: {
     badge: "为珠宝匠与数字艺术家打造",
@@ -186,6 +216,12 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "免费开始",
     ctaGetStarted: "开始使用",
     ctaContact: "联系我们",
+    planFeatures: {
+      free: ["文本与图像转 3D", "参数化生成", "标准队列", "CC BY 4.0 许可的资产"],
+      pro: ["包含 Free 的全部", "更快生成", "私有资产所有权", "GLB / STL / OBJ 导出", "10 个并发任务"],
+      studio: ["包含 Pro 的全部", "优先队列", "API 访问", "团队席位", "积分充值"],
+      enterprise: ["包含 Studio 的全部", "SSO 与访问控制", "专属支持", "开票与电汇"],
+    },
   },
   hi: {
     badge: "ज्वैलर्स और डिजिटल कलाकारों के लिए",
@@ -217,6 +253,12 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "मुफ्त शुरू करें",
     ctaGetStarted: "शुरू करें",
     ctaContact: "संपर्क करें",
+    planFeatures: {
+      free: ["टेक्स्ट और छवि से 3D", "पैरामीट्रिक जनरेशन", "मानक कतार", "CC BY 4.0 के तहत एसेट"],
+      pro: ["Free का सब कुछ", "तेज़ जनरेशन", "निजी एसेट स्वामित्व", "GLB / STL / OBJ निर्यात", "10 समवर्ती कार्य"],
+      studio: ["Pro का सब कुछ", "प्राथमिकता कतार", "API एक्सेस", "टीम सीटें", "क्रेडिट टॉप-अप"],
+      enterprise: ["Studio का सब कुछ", "SSO और एक्सेस नियंत्रण", "समर्पित सहायता", "चालान और वायर ट्रांसफर"],
+    },
   },
   ar: {
     badge: "لصُنّاع المجوهرات والفنانين الرقميين",
@@ -248,6 +290,12 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "ابدأ مجانًا",
     ctaGetStarted: "ابدأ",
     ctaContact: "تواصل معنا",
+    planFeatures: {
+      free: ["من النص والصورة إلى ثلاثي الأبعاد", "توليد بارامتري", "قائمة انتظار قياسية", "أصول بترخيص CC BY 4.0"],
+      pro: ["كل ما في Free", "توليد أسرع", "ملكية خاصة للأصول", "تصدير GLB / STL / OBJ", "10 مهام متزامنة"],
+      studio: ["كل ما في Pro", "قائمة انتظار ذات أولوية", "الوصول إلى API", "مقاعد للفريق", "شحن الأرصدة"],
+      enterprise: ["كل ما في Studio", "SSO والتحكم في الوصول", "دعم مخصص", "الفوترة والتحويل البنكي"],
+    },
   },
   fr: {
     badge: "Pour joailliers et artistes numériques",
@@ -279,5 +327,11 @@ export const MARKETING: Record<Locale, MarketingDict> = {
     ctaStartFree: "Commencer gratuitement",
     ctaGetStarted: "Commencer",
     ctaContact: "Nous contacter",
+    planFeatures: {
+      free: ["Texte et image en 3D", "Génération paramétrique", "File standard", "Actifs sous CC BY 4.0"],
+      pro: ["Tout de Free", "Génération plus rapide", "Propriété privée des actifs", "Exports GLB / STL / OBJ", "10 tâches simultanées"],
+      studio: ["Tout de Pro", "File prioritaire", "Accès API", "Sièges d'équipe", "Recharges de crédits"],
+      enterprise: ["Tout de Studio", "SSO et contrôle d'accès", "Support dédié", "Facturation et virement"],
+    },
   },
 };

@@ -9,70 +9,19 @@ import { MARKETING } from "@/lib/i18nMarketing";
 
 interface Tier {
   name: string;
+  key: "free" | "pro" | "studio" | "enterprise";
   monthly: number | null; // null => custom
   credits: number | null; // null => custom volume
   highlight?: boolean;
   cta: "free" | "start" | "contact";
   href: string;
-  features: string[];
 }
 
 const TIERS: Tier[] = [
-  {
-    name: "Free",
-    monthly: 0,
-    credits: 100,
-    cta: "free",
-    href: "/studio",
-    features: [
-      "Text & image to 3D",
-      "Parametric generation",
-      "Standard queue",
-      "Assets under CC BY 4.0",
-    ],
-  },
-  {
-    name: "Pro",
-    monthly: 20,
-    credits: 1000,
-    cta: "start",
-    href: "/studio",
-    features: [
-      "Everything in Free",
-      "Faster generation",
-      "Private asset ownership",
-      "GLB / STL / OBJ exports",
-      "10 concurrent tasks",
-    ],
-  },
-  {
-    name: "Studio",
-    monthly: 60,
-    credits: 4000,
-    highlight: true,
-    cta: "start",
-    href: "/studio",
-    features: [
-      "Everything in Pro",
-      "Priority queue",
-      "API access",
-      "Team seats",
-      "Credit top-ups",
-    ],
-  },
-  {
-    name: "Enterprise",
-    monthly: null,
-    credits: null,
-    cta: "contact",
-    href: "mailto:ozan@codeimo.com",
-    features: [
-      "Everything in Studio",
-      "SSO & access control",
-      "Dedicated support",
-      "Invoicing & wire transfer",
-    ],
-  },
+  { name: "Free", key: "free", monthly: 0, credits: 100, cta: "free", href: "/studio" },
+  { name: "Pro", key: "pro", monthly: 20, credits: 1000, cta: "start", href: "/studio" },
+  { name: "Studio", key: "studio", monthly: 60, credits: 4000, highlight: true, cta: "start", href: "/studio" },
+  { name: "Enterprise", key: "enterprise", monthly: null, credits: null, cta: "contact", href: "mailto:ozan@codeimo.com" },
 ];
 
 export default function Pricing() {
@@ -145,7 +94,7 @@ export default function Pricing() {
             </Button>
 
             <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
-              {tier.features.map((f) => (
+              {m.planFeatures[tier.key].map((f) => (
                 <li key={f} className="flex gap-2">
                   <span className="text-foreground">✓</span>
                   {f}
