@@ -96,25 +96,26 @@ export default function Studio() {
       stage: "generate",
     };
 
-    if (referenceUrl) {
-      try {
-        const res = await fetch("/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imageUrl: referenceUrl }),
-        });
-        if (res.ok && res.headers.get("Content-Type")?.includes("gltf")) {
-          job.modelUrl = URL.createObjectURL(await res.blob());
-        } else {
-          job.spec = specFromPrompt(prompt);
-          setNote(t.parametricNote);
-        }
-      } catch {
+    // Run the real pipeline for both inputs: an attached image lifts straight
+    // to 3D, a bare prompt is turned into a reference image first. If the
+    // service is unavailable, fall back to the parametric sample piece.
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          referenceUrl ? { imageUrl: referenceUrl } : { prompt },
+        ),
+      });
+      if (res.ok && res.headers.get("Content-Type")?.includes("gltf")) {
+        job.modelUrl = URL.createObjectURL(await res.blob());
+      } else {
         job.spec = specFromPrompt(prompt);
-        setNote(t.unavailableNote);
+        setNote(t.parametricNote);
       }
-    } else {
+    } catch {
       job.spec = specFromPrompt(prompt);
+      setNote(t.unavailableNote);
     }
 
     setJobs((prev) => [job, ...prev]);
