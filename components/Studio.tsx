@@ -59,11 +59,13 @@ function computeSeats(spec: JewelrySpec): StoneSeat[] {
 }
 
 export default function Studio() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { spend } = useCredits();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [activeId, setActiveId] = useState<string>();
   const [prompt, setPrompt] = useState("");
+  const [accessCode, setAccessCode] = useState("");
+  const accessLabel = locale === "tr" ? "Üretim erişim kodu (isteğe bağlı)" : "Generation access code (optional)";
   const [referenceUrl, setReferenceUrl] = useState<string>();
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string>();
@@ -78,7 +80,7 @@ export default function Studio() {
   }, []);
 
   const generate = useCallback(async () => {
-    if (!prompt.trim() && !referenceUrl) return;
+    if (busy || (!prompt.trim() && !referenceUrl)) return;
     if (!spend(GENERATION_COST)) {
       setNote(t.outOfCredits);
       return;
@@ -100,14 +102,14 @@ export default function Studio() {
     // to 3D, a bare prompt is turned into a reference image first. If the
     // service is unavailable, fall back to the parametric sample piece.
     try {
-      const res = await fetch("/api/generate", {
+      const res = accessCode ? await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessCode}` },
         body: JSON.stringify(
           referenceUrl ? { imageUrl: referenceUrl } : { prompt },
         ),
-      });
-      if (res.ok && res.headers.get("Content-Type")?.includes("gltf")) {
+      }) : null;
+      if (res?.ok && res.headers.get("Content-Type")?.includes("gltf")) {
         job.modelUrl = URL.createObjectURL(await res.blob());
       } else {
         job.spec = specFromPrompt(prompt);
@@ -123,7 +125,7 @@ export default function Studio() {
     setPrompt("");
     setReferenceUrl(undefined);
     setBusy(false);
-  }, [prompt, referenceUrl, t, spend]);
+  }, [accessCode, busy, prompt, referenceUrl, t, spend]);
 
   const update = useCallback((id: string, patch: Partial<Job>) => {
     setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, ...patch } : j)));
@@ -198,6 +200,15 @@ export default function Studio() {
               rows={3}
               className="w-full resize-none bg-transparent p-3 text-sm outline-none placeholder:text-muted-foreground"
             />
+            <input
+              type="password"
+              value={accessCode}
+              onChange={(event) => setAccessCode(event.target.value.trim())}
+              autoComplete="off"
+              aria-label={accessLabel}
+              placeholder={accessLabel}
+              className="w-full border-t border-border/50 bg-transparent px-3 py-2 text-sm"
+            />
             <div className="flex items-center justify-between p-2">
               <Button variant="ghost" size="sm" onClick={() => fileInput.current?.click()}>
                 {t.attachImage}
@@ -209,7 +220,7 @@ export default function Studio() {
             <input
               ref={fileInput}
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/webp"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];

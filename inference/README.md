@@ -16,6 +16,7 @@ The deploy prints a public endpoint URL. Set it in the web app environment:
 
 ```bash
 INFERENCE_URL=https://<your-deployment>.modal.run
+MODAL_PROXY_TOKEN=<token-id>.<token-secret>
 ```
 
 ## Contract
@@ -25,6 +26,8 @@ INFERENCE_URL=https://<your-deployment>.modal.run
 ```json
 { "image_base64": "data:image/png;base64,…" }
 ```
+
+Send the Modal Proxy Token in the `Authorization: Bearer` header. Redeploy the service to enable proxy authentication.
 
 Returns the generated mesh as `model/gltf-binary` (GLB).
 
