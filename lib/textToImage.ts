@@ -1,3 +1,5 @@
+import { readLimitedBody } from "@/lib/generation-access";
+
 /**
  * Text-to-image step of the generation pipeline.
  *
@@ -37,6 +39,8 @@ export async function imageFromPrompt(prompt: string): Promise<string> {
 
   const res = await fetch(FAL_ENDPOINT, {
     method: "POST",
+    redirect: "error",
+    signal: AbortSignal.timeout(40_000),
     headers: {
       Authorization: `Key ${key}`,
       "Content-Type": "application/json",
@@ -50,8 +54,7 @@ export async function imageFromPrompt(prompt: string): Promise<string> {
   });
 
   if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    throw new Error(`Image generation failed (${res.status}) ${detail}`.trim());
+    throw new Error("Image generation failed.");
   }
 
   const data = (await res.json()) as { images?: { url?: string }[] };
@@ -60,11 +63,18 @@ export async function imageFromPrompt(prompt: string): Promise<string> {
     throw new Error("Image generation returned no image.");
   }
 
-  const img = await fetch(url);
+  const source = new URL(url);
+  if (source.protocol !== "https:" || (source.hostname !== "fal.media" && !source.hostname.endsWith(".fal.media"))) {
+    throw new Error("Unexpected image host.");
+  }
+  const img = await fetch(source, { redirect: "error", signal: AbortSignal.timeout(5000) });
   if (!img.ok) {
     throw new Error(`Could not fetch generated image (${img.status}).`);
   }
-  const buffer = Buffer.from(await img.arrayBuffer());
-  const mime = img.headers.get("Content-Type") ?? "image/jpeg";
+  const mime = img.headers.get("Content-Type")?.split(";")[0];
+  if (!mime || !["image/png", "image/jpeg", "image/webp"].includes(mime)) {
+    throw new Error("Unexpected image type.");
+  }
+  const buffer = await readLimitedBody(img.body, 3 * 1024 * 1024);
   return `data:${mime};base64,${buffer.toString("base64")}`;
 }

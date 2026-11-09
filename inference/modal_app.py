@@ -15,6 +15,7 @@ The deploy prints a public URL; set it as INFERENCE_URL in the web app.
 
 import base64
 import io
+import binascii
 
 import modal
 
@@ -59,7 +60,7 @@ image = (
 )
 
 
-@app.cls(image=image, gpu="A10G", scaledown_window=120)
+@app.cls(image=image, gpu="A10G", scaledown_window=120, max_containers=2)
 class TripoSR:
     @modal.enter()
     def load(self) -> None:
@@ -80,7 +81,10 @@ class TripoSR:
         from PIL import Image
         from tsr.utils import remove_background, resize_foreground
 
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        with Image.open(io.BytesIO(image_bytes), formats=("PNG", "JPEG", "WEBP")) as source:
+            if source.width * source.height > 16_000_000:
+                raise ValueError("Image dimensions are too large")
+            image = source.convert("RGB")
         image = remove_background(image, self.rembg_session)
         image = resize_foreground(image, 0.85)
 
@@ -91,7 +95,7 @@ class TripoSR:
         mesh.export(buffer, file_type="glb")
         return buffer.getvalue()
 
-    @modal.fastapi_endpoint(method="POST")
+    @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate(self, payload: dict):
         """
         Accept { "image_base64": "<data>" } and return the generated GLB.
@@ -100,17 +104,24 @@ class TripoSR:
         from fastapi import Response
 
         data = payload.get("image_base64")
-        if not data:
+        if not isinstance(data, str) or not data:
             return Response(content="image_base64 is required", status_code=400)
 
-        if "," in data and data.strip().startswith("data:"):
+        if len(data) > 4 * 1024 * 1024 + 32:
+            return Response(content="Image is too large", status_code=413)
+
+        if "," in data and data.startswith("data:"):
             data = data.split(",", 1)[1]
 
         try:
-            image_bytes = base64.b64decode(data)
+            image_bytes = base64.b64decode(data, validate=True)
+        except (ValueError, binascii.Error):
+            return Response(content="Invalid image encoding", status_code=400)
+
+        try:
             glb = self._to_glb(image_bytes)
-        except Exception as exc:  # surface model errors to the caller
-            return Response(content=f"generation failed: {exc}", status_code=500)
+        except (OSError, ValueError):
+            return Response(content="Could not process the image", status_code=400)
 
         return Response(
             content=glb,

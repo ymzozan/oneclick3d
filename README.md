@@ -48,7 +48,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 | Variable        | Description                                            |
 | --------------- | ------------------------------------------------------ |
-| `INFERENCE_URL` | URL of the self-hosted image-to-3D service (`inference/`). |
+| `INFERENCE_URL` | HTTPS URL of the authenticated Modal service. |
+| `MODAL_PROXY_TOKEN` | Modal Proxy Token in `token-id.token-secret` format. |
+| `GENERATION_ACCESS_TOKEN` | Random access code of at least 32 characters for trusted Studio users. |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Redis credentials for the shared quota of 10 requests per hour. |
+| `FAL_KEY` | Optional fal.ai key for text-to-3D. |
+
+Set the values as server-side secrets. Redis must be reachable for paid generation. Enter the access code in Studio to use the paid service. The demo remains available without a code.
 
 Without the service configured, the studio runs against built-in placeholders so
 the interface can be explored end to end. See [`inference/README.md`](./inference/README.md)

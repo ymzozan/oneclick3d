@@ -7,30 +7,32 @@
  */
 
 export function inferenceConfigured(): boolean {
-  return Boolean(process.env.INFERENCE_URL);
+  return Boolean(process.env.INFERENCE_URL && process.env.MODAL_PROXY_TOKEN);
 }
 
 /**
  * Generate a 3D mesh from a reference image and return the raw GLB bytes.
- * `image` may be a public URL or a data URI.
+ * `image` is a validated image data URI.
  */
 export async function generateMeshFromImage(image: string): Promise<ArrayBuffer> {
   const endpoint = process.env.INFERENCE_URL;
-  if (!endpoint) {
+  const token = process.env.MODAL_PROXY_TOKEN;
+  if (!endpoint || !token) {
     throw new Error(
-      "INFERENCE_URL is not configured. Deploy the inference service and set the URL.",
+      "Inference is not configured.",
     );
   }
 
   const res = await fetch(endpoint, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    redirect: "error",
+    signal: AbortSignal.timeout(65_000),
     body: JSON.stringify({ image_base64: image }),
   });
 
   if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    throw new Error(`Inference failed (${res.status}) ${detail}`.trim());
+    throw new Error("Inference failed.");
   }
 
   return res.arrayBuffer();
